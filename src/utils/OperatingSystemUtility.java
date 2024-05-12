@@ -25,6 +25,14 @@ public class OperatingSystemUtility {
         return false;
     }
 
-
+    public static String getStandardizedOperatingSystem(String os) {
+        // 获取与输入字符串相匹配的标准操作系统名称
+        for (String osName : operatingSystems) {
+            if (osName.equalsIgnoreCase(os)) {
+                return osName;
+            }
+        }
+        return "Android"; // 如果操作系统无效，返回 "Android"
+    }
 
 }

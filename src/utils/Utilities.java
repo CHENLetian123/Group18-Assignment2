@@ -145,4 +145,14 @@ public class Utilities {
     public static boolean isValidIndex(List list, int indexToCheck){
         return ((indexToCheck >= 0) && (indexToCheck < list.size()));
     }
+
+    /**
+     * 验证存储是否在有效范围内并且是8的倍数。
+     *
+     * @param storage 要验证的存储大小
+     * @return 如果存储有效，返回 true，否则返回 false。
+     */
+    public static boolean isValidStorage(int storage) {
+        return (storage >= 8 && storage <= 128 && storage % 8 == 0);
+    }
 }
