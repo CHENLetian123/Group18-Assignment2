@@ -4,8 +4,7 @@ import utils.OperatingSystemUtility;
 import utils.Utilities;
 
 public class Tablet extends ComputingDevice {
-    private String operatingSystem;
-
+    private String operatingSystem = "Windows";
     public Tablet(String modelName, double price, Manufacturer manufacturer, String id, String processor, int storage, String operatingSystem) {
         super(modelName, price, manufacturer, id, processor, storage);
         setOperatingSystem(operatingSystem);
@@ -18,10 +17,8 @@ public class Tablet extends ComputingDevice {
     public void setOperatingSystem(String operatingSystem) {
         // 标准化并验证操作系统名称
         String standardizedOS = OperatingSystemUtility.getStandardizedOperatingSystem(operatingSystem);
-        if (OperatingSystemUtility.isValidOperatingSystem(standardizedOS)) {
+        if (standardizedOS != null) {
             this.operatingSystem = standardizedOS;
-        } else {
-            this.operatingSystem = "Windows"; // 默认值
         }
     }
 

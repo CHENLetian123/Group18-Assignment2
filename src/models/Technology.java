@@ -4,12 +4,12 @@ import utils.Utilities;
 
 public abstract class Technology {
     private Manufacturer manufacturer;
-    private String id;
+    private String id = "unknown";
     private String modelName;
-    private double price;
+    private double price = 20;
 
     public Technology(String modelName, double price, Manufacturer manufacturer, String id) {
-        setModelName(modelName);
+        this.modelName = Utilities.truncateString(modelName, 30);
         setPrice(price);
         setManufacturer(manufacturer);
         setId(id);
@@ -20,9 +20,9 @@ public abstract class Technology {
     }
 
     public void setModelName(String modelName) {
-        if (Utilities.validStringlength(modelName, 30)) {
-            this.modelName = Utilities.truncateString(modelName, 30);
-        }
+            if (Utilities.validStringlength(modelName, 30)) {
+                this.modelName = modelName;
+            }
     }
 
     public double getPrice() {
@@ -51,11 +51,10 @@ public abstract class Technology {
 
     public void setId(String id) {
         if (Utilities.validStringlength(id, 10)) {
-            this.id = Utilities.truncateString(id, 10);
-        } else {
-            this.id = "unknown";
+            this.id = id;
         }
     }
+
 
     public abstract double getInsurancePremium();
 
@@ -63,10 +62,17 @@ public abstract class Technology {
 
     @Override
     public String toString() {
-        return "ID: " + id +
-                ", Model Name: " + modelName +
+        String employeeCount = " employees"; // 默认为复数形式
+        if (manufacturer.getNumEmployees() == 1) {
+            employeeCount = " employee"; // 单数形式
+        }
+
+        return  "Model: " + modelName +
                 ", Price: €" + price +
-                ", Manufacturer: " + manufacturer.getManufacturerName() +
-                " (" + manufacturer.getNumEmployees() + " employees)";
+                ", Manufacturer Details: Manufacturer{manufacturerName='" + manufacturer.getManufacturerName() + "'" +
+                ", numEmployees=" + manufacturer.getNumEmployees() + employeeCount + "}" +
+                ", ID: " + id;
+        //"Model: Galaxy Tab S7, Price: €799.99, Manufacturer Details: Manufacturer{manufacturerName='Samsung', numEmployees=333 employees}, ID: 123456"
+        //"Model: Galaxy Tab S7 version 1 c.0946, Price: €20.0, Manufacturer Details: Manufacturer{manufacturerName='ABCDEFGHIJKLMNOPQRST', numEmployees=1 employee}, ID: unknown"
     }
 }

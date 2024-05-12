@@ -32,7 +32,7 @@ public class OperatingSystemUtility {
                 return osName;
             }
         }
-        return "Android"; // 如果操作系统无效，返回 "Android"
+        return null; // 如果操作系统无效，返回 null
     }
 
 }

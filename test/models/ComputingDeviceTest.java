@@ -59,8 +59,10 @@ public class ComputingDeviceTest {
     @Test
     public void testToString() {
         String expected = "Processor: Snapdragon 865, Storage: 64GB";
+        System.out.println(validTablet.toString()); // 记得删
         assertTrue( validTablet.toString().contains(expected));
         expected = "Processor: Snapdragon 865567892, Storage: 8GB";
+        System.out.println(invalidTablet.toString()); // 记得删
         assertTrue( invalidTablet.toString().contains(expected));
 
     }

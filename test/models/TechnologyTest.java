@@ -84,8 +84,10 @@ class TechnologyTest {
     @Test
     public void testToString() {
         String expected = "Model: Galaxy Tab S7, Price: €799.99, Manufacturer Details: Manufacturer{manufacturerName='Samsung', numEmployees=333 employees}, ID: 123456";
+        System.out.println(validTablet.toString()); //记得删
         assertTrue( validTablet.toString().contains(expected));
         expected = "Model: Galaxy Tab S7 version 1 c.0946, Price: €20.0, Manufacturer Details: Manufacturer{manufacturerName='ABCDEFGHIJKLMNOPQRST', numEmployees=1 employee}, ID: unknown";
+        System.out.println(invalidTablet.toString()); //记得删
         assertTrue( invalidTablet.toString().contains(expected));
 
     }

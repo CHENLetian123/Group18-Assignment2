@@ -8,7 +8,7 @@ public abstract class ComputingDevice extends Technology {
 
     public ComputingDevice(String modelName, double price, Manufacturer manufacturer, String id, String processor, int storage) {
         super(modelName, price, manufacturer, id);
-        setProcessor(processor);
+        this.processor = Utilities.truncateString(processor, 20);
         setStorage(storage);
     }
 
