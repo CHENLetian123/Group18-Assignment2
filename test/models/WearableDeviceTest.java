@@ -1,4 +1,3 @@
-/*
 package models;
 
 import org.junit.After;
@@ -26,39 +25,37 @@ public class WearableDeviceTest {
     }
 
     @Test
-    public void testGetMaterial() {
-        assertEquals("Aluminum", validWearable.getMaterial());
-        assertEquals("LongMaterialNameExceeds", invalidWearable.getMaterial());
+    public void shouldSetSizeWhenValid() {
+        WearableDevice device = new SmartWatch("Apple Watch", 399.99, new Manufacturer("Apple", 500), "123456", "Aluminum", "Medium", "AMOLED");
+        device.setSize("Small");
+        assertEquals("Small", device.getSize());
     }
 
     @Test
-    public void testSetMaterial() {
-        validWearable.setMaterial("Titanium");
-        assertEquals("Titanium", validWearable.getMaterial());
-        validWearable.setMaterial("MaterialNameThatIsTooLong");
-        assertEquals("Titanium", validWearable.getMaterial());
+    public void shouldNotSetSizeWhenInvalid() {
+        WearableDevice device = new SmartWatch("Apple Watch", 399.99, new Manufacturer("Apple", 500), "123456", "Aluminum", "Medium", "AMOLED");
+        device.setSize("SizeTooBigToFit");
+        assertEquals("Medium", device.getSize());
     }
 
     @Test
-    public void testGetSize() {
-        assertEquals("Medium", validWearable.getSize());
-        assertEquals("ExtraLargeSi", invalidWearable.getSize());
+    public void shouldSetMaterialWhenValid() {
+        WearableDevice device = new SmartWatch("Apple Watch", 399.99, new Manufacturer("Apple", 500), "123456", "Aluminum", "Medium", "AMOLED");
+        device.setMaterial("Titanium");
+        assertEquals("Titanium", device.getMaterial());
     }
 
     @Test
-    public void testSetSize() {
-        validWearable.setSize("Large");
-        assertEquals("Large", validWearable.getSize());
-        validWearable.setSize("SizeTooBigToFit");
-        assertEquals("Large", validWearable.getSize());
+    public void shouldNotSetMaterialWhenInvalid() {
+        WearableDevice device = new SmartWatch("Apple Watch", 399.99, new Manufacturer("Apple", 500), "123456", "Aluminum", "Medium", "AMOLED");
+        device.setMaterial("MaterialNameThatIsTooLong");
+        assertEquals("Aluminum", device.getMaterial());
     }
 
     @Test
-    public void testToString() {
+    public void shouldReturnCorrectToString() {
+        WearableDevice device = new SmartWatch("Apple Watch", 399.99, new Manufacturer("Apple", 500), "123456", "Aluminum", "Medium", "AMOLED");
         String expected = "Material: Aluminum, Size: Medium";
-        assertTrue(validWearable.toString().contains(expected));
-        expected = "Material: LongMaterialNameExceeds, Size: ExtraLargeSi";
-        assertTrue(invalidWearable.toString().contains(expected));
+        assertTrue(device.toString().contains(expected));
     }
 }
-*/
