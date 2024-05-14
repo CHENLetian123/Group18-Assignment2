@@ -1,9 +1,13 @@
 package models;
 
-public abstract class SmartWatch extends WearableDevice{
+import utils.DisplayTypeUtility;
+import utils.Utilities;
 
-    public SmartWatch(String modelName, double price, Manufacturer manufacturer, String id, String material, String size) {
+public class SmartWatch extends WearableDevice{
+
+    public SmartWatch(String modelName, double price, Manufacturer manufacturer, String id, String material, String size,String processor) {
         super(modelName, price, manufacturer, id, material, size);
+        setDisplayType(displayType);
     }
 
     private String displayType;
@@ -13,16 +17,20 @@ public abstract class SmartWatch extends WearableDevice{
     }
 
     public void setDisplayType(String displayType){
-        this.displayType = displayType;
+        if (DisplayTypeUtility.isValidDisplayType(displayType)){
+            this.displayType = displayType;
+        }
+        else {
+            this.displayType = "TCD";
+        }
     }
-
+    @Override
     public String connectToInternet(){
-
-        return null;
+        return "Connects to the Internet via Bluetooth!";
     }
 
     public double getInsurancePremium(){
-        return 0.0;
+        return Utilities.toTwoDecimalPlaces(getPrice() * 0.06);
     }
 
     public String toString(){
