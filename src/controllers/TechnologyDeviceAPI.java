@@ -2,6 +2,7 @@ package controllers;
 
 import models.*;
 
+import utils.DisplayTypeUtility;
 import utils.ISerializer;
 import utils.OperatingSystemUtility;
 
@@ -12,6 +13,8 @@ import java.util.*;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+
+import static utils.Utilities.isValidIndex;
 
 
 //TODO - ensure that this class implements iSerializer
@@ -31,31 +34,51 @@ public class TechnologyDeviceAPI implements ISerializer{
 
     // Create methods
     public boolean addTechnologyDevice(Technology technology) {
-        if (isValidId(technology.getId())) { // 在添加前先检查ID是否有效
+        if (isValidId(technology.getId())) {
             technologyList.add(technology);
             return true;
         }
-        return false; // 如果ID无效，则不添加设备
-    }
-
-
-
-    // Delete methods
-    public boolean removeTechnology(Technology technology) {
-        return technologyList.remove(technology);
-    }
-
-    // 更新智能手表
-    public boolean updateSmartWatch(String id, SmartWatch updatedDetails) {
-        for (int i = 0; i < technologyList.size(); i++) {
-            Technology tech = technologyList.get(i);
-            if (tech instanceof SmartWatch && tech.getId().equalsIgnoreCase(id)) {
-                technologyList.set(i, updatedDetails);
-                return true;
-            }
-        }
         return false;
     }
+
+    public boolean addSmartWatch(SmartWatch smartWatch){
+        if (!DisplayTypeUtility.isValidDisplayType(smartWatch.getDisplayType()) ){
+            return false;
+        }
+
+        if (smartWatch.getManufacturer() == null) {
+            return false;
+        }
+
+        technologyList.add(smartWatch);
+        return true;
+    }
+
+    public boolean addTablet(Tablet tablet){
+        if (!OperatingSystemUtility.isValidOperatingSystem(tablet.getOperatingSystem())){
+            return false;
+        }
+
+        if (tablet.getManufacturer() == null) {
+            return false;
+        }
+
+        tablet.setStorage(tablet.getStorage());
+
+        technologyList.add(tablet);
+        return true;
+    }
+
+    public boolean addSmartBand(SmartBand smartBand){
+        if (smartBand.getManufacturer() == null) {
+            return false;
+        }
+
+        technologyList.add(smartBand);
+        return true;
+    }
+
+
 
 
     //TODO - Number methods
@@ -131,6 +154,16 @@ public class TechnologyDeviceAPI implements ISerializer{
         }
         return list.toString();
     }
+
+    public String getManufacturerNameByModelName(String modelName) {
+        for (Technology tech : technologyList) {
+            if (tech.getModelName().equalsIgnoreCase(modelName)) {
+                return tech.getManufacturer().getManufacturerName();
+            }
+        }
+        return "No manufacturer found for this model name";
+    }
+
     // 列出所有技术设备
     public String listAllTechnologyDevices() {
         if (technologyList.isEmpty()) {
@@ -143,16 +176,73 @@ public class TechnologyDeviceAPI implements ISerializer{
         return sb.toString();
     }
 
-    // 列出所有价格高于某值的技术设备
-    public String listAllTechnologyAbovePrice(double price) {
-        StringBuilder sb = new StringBuilder();
-        for (Technology tech : technologyList) {
-            if (tech.getPrice() >= price) {
-                sb.append(tech.toString()).append("\n");
+    public String listAllByModelName(String modelName){
+        if (!technologyList.isEmpty()) {
+            String listTechnology = "";
+            for (Technology tech : technologyList) {
+                if (tech.getModelName().equalsIgnoreCase(modelName))
+                    listTechnology += technologyList.indexOf(tech) + ": " + tech + "\n";
+            }
+            if (listTechnology.equals("")) {
+                return "No Technology devices called that model name";
+            } else {
+                return listTechnology;
             }
         }
-        return sb.length() == 0 ? "No technology more expensive than €" + price : sb.toString();
+        else return "There are no Technology devices in the list.";
     }
+
+    public  String listAllByManufacturerName(String manuName){
+        if (!technologyList.isEmpty()) {
+            String listTechnology = "";
+            for (Technology tech : technologyList) {
+                if (tech.getManufacturer().getManufacturerName().equalsIgnoreCase(manuName))
+                    listTechnology += technologyList.indexOf(tech) + ": " + tech + "\n";
+        }
+            if (listTechnology.equals("")) {
+                return "No Technology devices by that manufacturer";
+            } else {
+                return listTechnology;
+            }
+        }
+        else return "There are no Technology devices in the list.";
+    }
+
+
+    /*public String listAllByManufacturerName(String manuName){
+        if (!manufacturers.isEmpty()) {
+            String listManufacturers = "";
+            for (Manufacturer manufacturer : manufacturers) {
+                if (manufacturer.getManufacturerName().equalsIgnoreCase(manuName))
+                    listManufacturers += manufacturers.indexOf(manufacturer) + ": " + manufacturer + "\n";
+            }
+            if (listManufacturers.equals("")) {
+                return "No manufacturers of that name";
+            } else {
+                return listManufacturers;
+            }
+        }
+        else return "There are no manufacturers in the list.";
+    }*/
+
+    public String listAllTechnologyAbovePrice(double price) {
+        if (technologyList.isEmpty()) {
+            return "No Technology Devices in the store";
+        } else {
+            String result = "";
+            for (int i = 0; i < technologyList.size(); i++) {
+                if (technologyList.get(i).getPrice() > price) {
+                    result += i + ": " + technologyList.get(i) + "\n";
+                }
+            }
+            if (result.equals("")) {
+                return "No technology more expensive than: " + price;
+            } else {
+                return result;
+            }
+        }
+    }
+
 
 
     //the following is isValidId can be updated
@@ -182,7 +272,6 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
 
-
     public Technology getTechnologyById(String id) {
         for (Technology tech : technologyList) {
             if (tech.getId().equals(id)) {
@@ -192,25 +281,124 @@ public class TechnologyDeviceAPI implements ISerializer{
         return null;
     }
 
-    // 设备数量统计
+    public Technology getTechnologyByModelName(String modelName) {
+        for (Technology tech : technologyList) {
+            if (tech.getModelName().equalsIgnoreCase(modelName)) {
+                return tech;
+            }
+        }
+        return null;
+    }
+
     public int numberOfTechnologyDevices() {
         return technologyList.size();
     }
 
+
+    /*public int retrieveManufacturerIndex(String manufacturerName) {
+        int index = 0;
+        for (Manufacturer manufacturer : manufacturers) {
+            if (manufacturer.getManufacturerName().equalsIgnoreCase(manufacturerName)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }*/
+    public int retrieveTechnologyIndex(String modelName) {
+        int index = 0;
+        for (Technology tech : technologyList) {
+            if (tech.getModelName().equalsIgnoreCase(modelName)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
+    }
    //TODO - delete methods
-    // 通过ID删除技术设备
-   public boolean deleteTechnologyById(String id) {
-       for (int i = 0; i < technologyList.size(); i++) {
-           if (technologyList.get(i).getId().equalsIgnoreCase(id)) {
-               technologyList.remove(i);
-               return true;
-           }
+    public Technology removeTechnologyByIndex(String modelName) {
+        int index = retrieveTechnologyIndex(modelName);
+        if (index != -1) {
+            return technologyList.remove(index);
+        }
+        return null;
+    }
+   /*public Manufacturer removeManufacturerByName(String manufacturerName){
+       int index = retrieveManufacturerIndex(manufacturerName);
+       if (index != -1) {
+           return manufacturers.remove(index);
        }
-       return false;
-   }
+       return null;
+   }*/
+
+
+    // update methods
+    public boolean updateTechnology(String oldModelName, Technology updateTech) {
+        Technology foundTech = getTechnologyByModelName(oldModelName);
+        if (foundTech != null) {
+            foundTech.setModelName(updateTech.getModelName());
+            foundTech.setPrice(updateTech.getPrice());
+            foundTech.setManufacturer(updateTech.getManufacturer());
+            foundTech.setId(updateTech.getId());
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean updateSmartWatch(String oldModelName, SmartWatch updateSmartWatch) {
+        SmartWatch foundSmartWatch = (SmartWatch) getTechnologyByModelName(oldModelName);
+        if (foundSmartWatch != null) {
+            foundSmartWatch.setModelName(updateSmartWatch.getModelName());
+            foundSmartWatch.setPrice(updateSmartWatch.getPrice());
+            foundSmartWatch.setManufacturer(updateSmartWatch.getManufacturer());
+            foundSmartWatch.setId(updateSmartWatch.getId());
+            foundSmartWatch.setDisplayType(updateSmartWatch.getDisplayType());
+            foundSmartWatch.setMaterial(updateSmartWatch.getMaterial());
+            foundSmartWatch.setSize(updateSmartWatch.getSize());
+            return true;
+        }
+        return false;
+    }
+
+    public boolean updateTablet(String oldModelName, Tablet updateTablet) {
+        Tablet foundTablet = (Tablet) getTechnologyByModelName(oldModelName);
+        if (foundTablet != null) {
+            foundTablet.setModelName(updateTablet.getModelName());
+            foundTablet.setPrice(updateTablet.getPrice());
+            foundTablet.setManufacturer(updateTablet.getManufacturer());
+            foundTablet.setId(updateTablet.getId());
+            foundTablet.setProcessor(updateTablet.getProcessor());
+            foundTablet.setStorage(updateTablet.getStorage());
+            foundTablet.setOperatingSystem(updateTablet.getOperatingSystem());
+            return true;
+        }
+        return false;
+    }
+
+
+    public boolean updateSmartBand(String oldModelName, SmartBand updateSmartBand) {
+        SmartBand foundSmartBand = (SmartBand) getTechnologyByModelName(oldModelName);
+        if (foundSmartBand != null) {
+            foundSmartBand.setModelName(updateSmartBand.getModelName());
+            foundSmartBand.setPrice(updateSmartBand.getPrice());
+            foundSmartBand.setManufacturer(updateSmartBand.getManufacturer());
+            foundSmartBand.setId(updateSmartBand.getId());
+            foundSmartBand.setHeartRateMonitor(updateSmartBand.isHeartRateMonitor());
+            foundSmartBand.setSize(updateSmartBand.getSize());
+            foundSmartBand.setMaterial(updateSmartBand.getMaterial());
+            return true;
+        }
+        return false;
+    }
 
 
     //TODO - sort methods
+    private void swapTechnology(int i, int j) {
+        Technology temp = technologyList.get(i);
+        technologyList.set(i, technologyList.get(j));
+        technologyList.set(j, temp);
+    }
 
     // 按价格降序排序
     public void sortByPriceDescending() {
@@ -219,9 +407,7 @@ public class TechnologyDeviceAPI implements ISerializer{
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getPrice() < technologyList.get(i + 1).getPrice()) {
-                    Technology temp = technologyList.get(i);
-                    technologyList.set(i, technologyList.get(i + 1));
-                    technologyList.set(i + 1, temp);
+                    swapTechnology(i, i + 1);
                     swapped = true;
                 }
             }
@@ -229,44 +415,129 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
 
-    private void swapTechnology(int i, int j) {
-        Technology temp = technologyList.get(i);
-        technologyList.set(i, technologyList.get(j));
-        technologyList.set(j, temp);
+    // 按价格升序排序
+    public void sortByPriceAscending() {
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < technologyList.size() - 1; i++) {
+                if (technologyList.get(i).getPrice() > technologyList.get(i + 1).getPrice()) {
+                    swapTechnology(i, i + 1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
     }
+
+
+    // 按型号名称升序排序
+    public void sortByModelNameAscending() {
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < technologyList.size() - 1; i++) {
+                if (technologyList.get(i).getModelName().compareTo(technologyList.get(i + 1).getModelName()) > 0) {
+                    swapTechnology(i, i + 1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+
+
+    // 按型号名称降序排序
+    public void sortByModelNameDescending() {
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < technologyList.size() - 1; i++) {
+                if (technologyList.get(i).getModelName().compareTo(technologyList.get(i + 1).getModelName()) < 0) {
+                    swapTechnology(i, i + 1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+
+
+    // 按制造商名称升序排序
+    public void sortByManufacturerNameAscending() {
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < technologyList.size() - 1; i++) {
+                if (technologyList.get(i).getManufacturer().getManufacturerName().compareTo(technologyList.get(i + 1).getManufacturer().getManufacturerName()) > 0) {
+                    swapTechnology(i, i + 1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+
+
+    // 按制造商名称降序排序
+    public void sortByManufacturerNameDescending() {
+        boolean swapped;
+        do {
+            swapped = false;
+            for (int i = 0; i < technologyList.size() - 1; i++) {
+                if (technologyList.get(i).getManufacturer().getManufacturerName().compareTo(technologyList.get(i + 1).getManufacturer().getManufacturerName()) < 0) {
+                    swapTechnology(i, i + 1);
+                    swapped = true;
+                }
+            }
+        } while (swapped);
+    }
+
+
+
+
 
     //TODO Top 5 methods
 
-    // 获取Top 5最昂贵的技术设备
+    // List the Top five most expensive Technology devices
     public List<Technology> topFiveMostExpensiveTechnology() {
         List<Technology> sortedList = new ArrayList<>(technologyList);
         sortTechnologiesByPriceDescending(sortedList);
         return sortedList.subList(0, Math.min(5, sortedList.size()));
     }
 
-    // 获取Top 5最昂贵的智能手表
-    public List<Technology> topFiveMostExpensiveSmartWatch() {
-        List<Technology> filteredAndSorted = new ArrayList<>();
-        for (Technology tech : technologyList) {
-            if (tech instanceof SmartWatch) {
-                filteredAndSorted.add(tech);
-            }
-        }
-        sortTechnologiesByPriceDescending(filteredAndSorted);
-        return filteredAndSorted.subList(0, Math.min(5, filteredAndSorted.size()));
-    }
-
-    // 获取Top 5最昂贵的平板
-    public List<Technology> topFiveMostExpensiveTablet() {
-        List<Technology> filteredAndSorted = new ArrayList<>();
+    // List the Top five most expensive Tablets
+    public List<Technology> topFiveMostExpensiveTablets() {
+        List<Technology> sorted = new ArrayList<>();
         for (Technology tech : technologyList) {
             if (tech instanceof Tablet) {
-                filteredAndSorted.add(tech);
+                sorted.add(tech);
             }
         }
-        sortTechnologiesByPriceDescending(filteredAndSorted);
-        return filteredAndSorted.subList(0, Math.min(5, filteredAndSorted.size()));
+        sortTechnologiesByPriceDescending(sorted);
+        return sorted.subList(0, Math.min(5, sorted.size()));
     }
+
+    // List the Top five most expensive Smartwatches
+    public List<Technology> topFiveMostExpensiveSmartWatches() {
+        List<Technology> sorted = new ArrayList<>();
+        for (Technology tech : technologyList) {
+            if (tech instanceof SmartWatch) {
+                sorted.add(tech);
+            }
+        }
+        sortTechnologiesByPriceDescending(sorted);
+        return sorted.subList(0, Math.min(5, sorted.size()));
+    }
+
+    // List the Top five most expensive Smart Bands
+    public List<Technology> topFiveMostExpensiveSmartBands() {
+        List<Technology> sorted = new ArrayList<>();
+        for (Technology tech : technologyList) {
+            if (tech instanceof SmartBand) {
+                sorted.add(tech);
+            }
+        }
+        sortTechnologiesByPriceDescending(sorted);
+        return sorted.subList(0, Math.min(5, sorted.size()));
+    }
+
 
     // 辅助方法：按价格降序排序
     private void sortTechnologiesByPriceDescending(List<Technology> list) {

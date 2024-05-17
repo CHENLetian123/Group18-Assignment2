@@ -62,15 +62,11 @@ public abstract class Technology {
 
     @Override
     public String toString() {
-        String employeeCount = " employees"; // 默认为复数形式
-        if (manufacturer.getNumEmployees() == 1) {
-            employeeCount = " employee"; // 单数形式
-        }
 
         return  "Model: " + modelName +
                 ", Price: €" + price +
                 ", Manufacturer Details: Manufacturer{manufacturerName='" + manufacturer.getManufacturerName() + "'" +
-                ", numEmployees=" + manufacturer.getNumEmployees() + employeeCount + "}" +
+                ", numEmployees=" + manufacturer.getNumEmployees() + (manufacturer.getNumEmployees() ==1 ? " employee" : " employees") + "}" +
                 ", ID: " + id;
         //"Model: Galaxy Tab S7, Price: €799.99, Manufacturer Details: Manufacturer{manufacturerName='Samsung', numEmployees=333 employees}, ID: 123456"
         //"Model: Galaxy Tab S7 version 1 c.0946, Price: €20.0, Manufacturer Details: Manufacturer{manufacturerName='ABCDEFGHIJKLMNOPQRST', numEmployees=1 employee}, ID: unknown"

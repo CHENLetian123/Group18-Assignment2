@@ -122,6 +122,8 @@ public class ManufacturerAPI  implements ISerializer {
         return false;
     }
 
+    /*
+    Wrong method
     public int retrieveManufacturerIndex(String manufacturerName){
         for (Manufacturer manufacturer : manufacturers){
             if (isValidManufacturer(manufacturerName)){
@@ -129,7 +131,21 @@ public class ManufacturerAPI  implements ISerializer {
             }
         }
         return -1;
+    }*/
+
+
+    public int retrieveManufacturerIndex(String manufacturerName) {
+        int index = 0;
+        for (Manufacturer manufacturer : manufacturers) {
+            if (manufacturer.getManufacturerName().equalsIgnoreCase(manufacturerName)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
+
+
 
     //---------------------
     // Getters/Setters
@@ -170,5 +186,9 @@ public class ManufacturerAPI  implements ISerializer {
         ObjectInputStream in = xstream.createObjectInputStream(new FileReader(file));
         manufacturers = (List<Manufacturer>) in.readObject();
         in.close();
+    }
+
+    public int getNumberOfManufacturers(){
+        return manufacturers.size();
     }
 }
