@@ -36,8 +36,9 @@ public class Tablet extends ComputingDevice {
 
     @Override
     public String toString() {
-        return super.toString() +
-                ", Operating System: " + operatingSystem +
-                ", Insurance Premium: €" + String.format("%.2f", getInsurancePremium());
+        return  "  Tablet" + "\n" +
+                super.toString() +
+                "\n" + ", Operating System: " + operatingSystem +
+                ", Insurance Premium: €" + String.format("%.2f", getInsurancePremium()) + "\n";
     }
 }

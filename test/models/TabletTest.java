@@ -74,6 +74,7 @@ public class TabletTest {
     @Test
     public void testToString() {
         String expected = "Operating System: Android, Insurance Premium: €7.99";
+        System.out.println(validTablet.toString()); // 记得删
         assertTrue( validTablet.toString().contains(expected));
         expected = "Operating System: Windows, Insurance Premium: €0.2";
         System.out.println(invalidTablet.toString()); // 记得删

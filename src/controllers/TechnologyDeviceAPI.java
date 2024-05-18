@@ -42,37 +42,22 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     public boolean addSmartWatch(SmartWatch smartWatch){
-        if (!DisplayTypeUtility.isValidDisplayType(smartWatch.getDisplayType()) ){
-            return false;
-        }
-
-        if (smartWatch.getManufacturer() == null) {
-            return false;
-        }
+        smartWatch.setDisplayType(smartWatch.getDisplayType());
 
         technologyList.add(smartWatch);
         return true;
     }
 
     public boolean addTablet(Tablet tablet){
-        if (!OperatingSystemUtility.isValidOperatingSystem(tablet.getOperatingSystem())){
-            return false;
-        }
-
-        if (tablet.getManufacturer() == null) {
-            return false;
-        }
-
+        tablet.setOperatingSystem(tablet.getOperatingSystem());
         tablet.setStorage(tablet.getStorage());
+        tablet.setOperatingSystem(tablet.getOperatingSystem());
 
         technologyList.add(tablet);
         return true;
     }
 
     public boolean addSmartBand(SmartBand smartBand){
-        if (smartBand.getManufacturer() == null) {
-            return false;
-        }
 
         technologyList.add(smartBand);
         return true;
@@ -127,32 +112,45 @@ public class TechnologyDeviceAPI implements ISerializer{
 
     // TODO Read/list methods
     public String listAllTablets() {
-        StringBuilder list = new StringBuilder();
+        String listAllTablets = "";
         for (Technology tech : technologyList) {
             if (tech instanceof Tablet) {
-                list.append(tech.toString()).append("\n");
+                listAllTablets += tech + "\n";
             }
         }
-        return list.toString();
+        if (listAllTablets.equals("")) {
+            return "No Tablets";
+        } else {
+            return listAllTablets;
+        }
     }
+
     public String listAllSmartWatches() {
-        StringBuilder list = new StringBuilder();
+        String listAllSmartWatches = "";
         for (Technology tech : technologyList) {
             if (tech instanceof SmartWatch) {
-                list.append(tech.toString()).append("\n");
+                listAllSmartWatches += tech + "\n";
             }
         }
-        return list.toString();
+        if (listAllSmartWatches.equals("")) {
+            return "No Smart Watches";
+        } else {
+            return listAllSmartWatches;
+        }
     }
 
     public String listAllSmartBands() {
-        StringBuilder list = new StringBuilder();
+        String listAllSmartBands = "";
         for (Technology tech : technologyList) {
             if (tech instanceof SmartBand) {
-                list.append(tech.toString()).append("\n");
+                listAllSmartBands += tech + "\n";
             }
         }
-        return list.toString();
+        if (listAllSmartBands.equals("")) {
+            return "No Smart Bands";
+        } else {
+            return listAllSmartBands;
+        }
     }
 
     public String getManufacturerNameByModelName(String modelName) {
@@ -166,14 +164,15 @@ public class TechnologyDeviceAPI implements ISerializer{
 
     // 列出所有技术设备
     public String listAllTechnologyDevices() {
-        if (technologyList.isEmpty()) {
-            return "No Technology Devices";
-        }
-        StringBuilder sb = new StringBuilder();
+        String listAllTechnologyDevices = "";
         for (Technology tech : technologyList) {
-            sb.append(tech.toString()).append("\n");
+            listAllTechnologyDevices += (technologyList.indexOf(tech) + 1) + ": "+ "\n" + tech + "\n";
         }
-        return sb.toString();
+        if (listAllTechnologyDevices.equals("")) {
+            return "No Technology Devices";
+        } else {
+            return listAllTechnologyDevices;
+        }
     }
 
     public String listAllByModelName(String modelName){
@@ -181,7 +180,7 @@ public class TechnologyDeviceAPI implements ISerializer{
             String listTechnology = "";
             for (Technology tech : technologyList) {
                 if (tech.getModelName().equalsIgnoreCase(modelName))
-                    listTechnology += technologyList.indexOf(tech) + ": " + tech + "\n";
+                    listTechnology += tech + "\n";
             }
             if (listTechnology.equals("")) {
                 return "No Technology devices called that model name";
@@ -241,6 +240,10 @@ public class TechnologyDeviceAPI implements ISerializer{
                 return result;
             }
         }
+    }
+
+    public List<Technology> getAllTechnologies() {
+        return new ArrayList<>(technologyList);
     }
 
 
@@ -305,10 +308,10 @@ public class TechnologyDeviceAPI implements ISerializer{
         }
         return -1;
     }*/
-    public int retrieveTechnologyIndex(String modelName) {
+    public int retrieveTechnologyIndex(String ID) {
         int index = 0;
         for (Technology tech : technologyList) {
-            if (tech.getModelName().equalsIgnoreCase(modelName)) {
+            if (tech.getId().equalsIgnoreCase(ID)) {
                 return index;
             }
             index++;
@@ -316,8 +319,8 @@ public class TechnologyDeviceAPI implements ISerializer{
         return -1;
     }
    //TODO - delete methods
-    public Technology removeTechnologyByIndex(String modelName) {
-        int index = retrieveTechnologyIndex(modelName);
+    public Technology removeTechnologyByID(String ID) {
+        int index = retrieveTechnologyIndex(ID);
         if (index != -1) {
             return technologyList.remove(index);
         }
@@ -346,8 +349,8 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
 
-    public boolean updateSmartWatch(String oldModelName, SmartWatch updateSmartWatch) {
-        SmartWatch foundSmartWatch = (SmartWatch) getTechnologyByModelName(oldModelName);
+    public boolean updateSmartWatch(String oldId, SmartWatch updateSmartWatch) {
+        SmartWatch foundSmartWatch = (SmartWatch) getTechnologyById(oldId);
         if (foundSmartWatch != null) {
             foundSmartWatch.setModelName(updateSmartWatch.getModelName());
             foundSmartWatch.setPrice(updateSmartWatch.getPrice());
@@ -361,8 +364,8 @@ public class TechnologyDeviceAPI implements ISerializer{
         return false;
     }
 
-    public boolean updateTablet(String oldModelName, Tablet updateTablet) {
-        Tablet foundTablet = (Tablet) getTechnologyByModelName(oldModelName);
+    public boolean updateTablet(String oldId, Tablet updateTablet) {
+        Tablet foundTablet = (Tablet) getTechnologyById(oldId);
         if (foundTablet != null) {
             foundTablet.setModelName(updateTablet.getModelName());
             foundTablet.setPrice(updateTablet.getPrice());
@@ -377,8 +380,8 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
 
-    public boolean updateSmartBand(String oldModelName, SmartBand updateSmartBand) {
-        SmartBand foundSmartBand = (SmartBand) getTechnologyByModelName(oldModelName);
+    public boolean updateSmartBand(String oldId, SmartBand updateSmartBand) {
+        SmartBand foundSmartBand = (SmartBand) getTechnologyById(oldId);
         if (foundSmartBand != null) {
             foundSmartBand.setModelName(updateSmartBand.getModelName());
             foundSmartBand.setPrice(updateSmartBand.getPrice());

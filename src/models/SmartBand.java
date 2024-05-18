@@ -28,14 +28,14 @@ public class SmartBand extends WearableDevice {
     public String toString(){
         String str=super.toString();
         if(heartRateMonitor){
-            str+="Includes Heart Rate Monitor";
+            str+="\n" + "Includes Heart Rate Monitor";
         }
         else{
             str+="No Heart Rate Monitor included";
         }
         str += ", Insurance Premium: " + getInsurancePremium() +
-                ", Internet Connection: " + connectToInternet();
-        return str;
+                ", Internet Connection: " + connectToInternet() + "\n";
+        return "  Smart Band" + "\n" + str;
     }
 
 }

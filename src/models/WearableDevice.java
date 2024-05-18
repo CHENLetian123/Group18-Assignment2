@@ -37,7 +37,7 @@ public abstract class WearableDevice extends Technology {
     @Override
     public String toString() {
         return super.toString() +
-                ", Material: " + material +
+                "\n" + ", Material: " + material +
                 ", Size: " + size;
     }
 

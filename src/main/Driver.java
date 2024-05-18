@@ -4,6 +4,7 @@ import controllers.ManufacturerAPI;
 import controllers.TechnologyDeviceAPI;
 
 import models.*;
+import utils.OperatingSystemUtility;
 import utils.ScannerInput;
 import utils.Utilities;
 import utils.DisplayTypeUtility;
@@ -326,6 +327,10 @@ public class Driver {
         }
 
         String id = ScannerInput.readNextLine("Please enter the device ID: ");
+        if (!techAPI.isValidId(id)){
+            System.out.println("This device ID already exists! Please use a different device ID or update by this device ID.");
+            return;
+        }
 
         char type = ScannerInput.readNextChar("Please enter the type (T=Tablet, S=SmartWatch, B=SmartBand): ");
 
@@ -338,10 +343,16 @@ public class Driver {
     }
 
     private void addTablet(String model, double price, Manufacturer manufacturer, String id) {
+        System.out.println("Adding a Tablet...");
         String processor = ScannerInput.readNextLine("Please enter the processor: ");
         int storage = ScannerInput.readNextInt("Please enter the storage (GB): ");
         String operatingSystem = ScannerInput.readNextLine("Please enter the operating system: ");
+        if (!OperatingSystemUtility.isValidOperatingSystem(operatingSystem)){
+            System.out.println("Invalid operating system name.");
+            return;
+        }
         Tablet tablet = new Tablet(model, price, manufacturer, id, processor, storage, operatingSystem);
+
         if (techAPI.addTablet(tablet)) {
             System.out.println("Tablet added successfully.");
         } else {
@@ -350,6 +361,7 @@ public class Driver {
     }
 
     private void addSmartWatch(String model, double price, Manufacturer manufacturer, String id) {
+        System.out.println("Adding a SmartWatch...");
         String material = ScannerInput.readNextLine("Please enter the material: ");
         String size = ScannerInput.readNextLine("Please enter the size: ");
         String displayType = ScannerInput.readNextLine("Please enter the display type: ");
@@ -366,6 +378,7 @@ public class Driver {
     }
 
     private void addSmartBand(String model, double price, Manufacturer manufacturer, String id) {
+        System.out.println("Adding a SmartBand...");
         String material = ScannerInput.readNextLine("Please enter the material: ");
         String size = ScannerInput.readNextLine("Please enter the size: ");
         char heartRateMonitor = ScannerInput.readNextChar("Does it have a heart rate monitor? (Y/N): ");
@@ -379,8 +392,31 @@ public class Driver {
         }
     }
 
+    private int updateMenu() {
+        System.out.println("""
+        ------------Update Menu-------------
+       | 1) Update by Model Name            |
+       | 2) Update by Device ID             |
+       | 0) Return to Technology Store Menu |
+        -----------------------""");
+        return ScannerInput.readNextInt("==>>");
+    }
 
-    private void deleteTechnology() {
+    private void updateTechDevice() {
+        int option = updateMenu();
+        while (option != 0) {
+            switch (option) {
+                case 1 -> updateTechDeviceByModelName();
+                case 2 -> updateTechDeviceById();
+                default -> System.out.println("Invalid option entered: " + option);
+            }
+            ScannerInput.readNextLine("\n Press the enter key to continue");
+            option = updateMenu();
+        }
+    }
+
+
+    /*private void deleteTechnology() {
         String technologyId = ScannerInput.readNextLine("Please enter the model name: ");
         if (techAPI.removeTechnologyByIndex(technologyId) != null){
             System.out.println("Delete successful");
@@ -388,75 +424,73 @@ public class Driver {
         else{
             System.out.println("Delete not successful");
         }
+    }*/
+    private void deleteTechnology() {
+        int option = deleteMenu();
+        while (option != 0) {
+            switch (option) {
+                case 1 -> deleteTechDeviceByModelName();
+                case 2 -> deleteTechDeviceById();
+                default -> System.out.println("Invalid option entered: " + option);
+            }
+            ScannerInput.readNextLine("\nPress the enter key to continue");
+            option = deleteMenu();
+        }
     }
 
-    private void updateTechDevice() {
-        String oldModelName = ScannerInput.readNextLine("Please enter the model name to update: ");
-        Technology technology = techAPI.getTechnologyByModelName(oldModelName);
+    private int deleteMenu() {
+        System.out.println("""
+    ------------Delete Menu-------------
+   | 1) Delete by Model Name            |
+   | 2) Delete by Device ID             |
+   | 0) Return to Technology Store Menu |
+    -----------------------------------""");
+        return ScannerInput.readNextInt("==>>");
+    }
+
+    private void deleteTechDeviceByModelName() {
+        String modelName = ScannerInput.readNextLine("Please enter the model name to delete: ");
+        Technology technology = techAPI.getTechnologyByModelName(modelName);
         if (technology == null) {
             System.out.println("Device not found.");
             return;
         }
 
-        String newModelName = ScannerInput.readNextLine("Please enter the new model name: ");
-        double price = ScannerInput.readNextDouble("Please enter the new price: ");
-        String manufacturerName = ScannerInput.readNextLine("Please enter the new manufacturer's name: ");
-        Manufacturer manufacturer = manufacturerAPI.getManufacturerByName(manufacturerName);
-        if (manufacturer == null) {
-            System.out.println("Manufacturer not found.");
+        // 检查是否有多个设备共享同一个模型名称
+        int count = 0;
+        for (Technology tech : techAPI.getAllTechnologies()) {
+            if (tech.getModelName().equalsIgnoreCase(modelName)) {
+                count++;
+            }
+        }
+
+        if (count > 1) {
+            System.out.println("Multiple devices found with the same model name. Please use device ID to delete.");
+            System.out.println(techAPI.listAllByModelName(modelName));
             return;
         }
-        String id = ScannerInput.readNextLine("Please enter the new device ID: ");
-        char type = ScannerInput.readNextChar("Please enter the type (T=Tablet, S=SmartWatch, B=SmartBand): ");
 
-        switch (type) {
-            case 'T', 't' -> updateTablet(oldModelName, newModelName, price, manufacturer, id);
-            case 'S', 's' -> updateSmartWatch(oldModelName, newModelName, price, manufacturer, id);
-            case 'B', 'b' -> updateSmartBand(oldModelName, newModelName, price, manufacturer, id);
-            default -> System.out.println("Invalid type entered.");
-        }
-    }
-
-    private void updateTablet(String oldModelName, String newModelName, double price, Manufacturer manufacturer, String id) {
-        String processor = ScannerInput.readNextLine("Please enter the new processor: ");
-        int storage = ScannerInput.readNextInt("Please enter the new storage (GB): ");
-        String operatingSystem = ScannerInput.readNextLine("Please enter the new operating system: ");
-        Tablet updatedTablet = new Tablet(newModelName, price, manufacturer, id, processor, storage, operatingSystem);
-        if (techAPI.updateTablet(oldModelName, updatedTablet)) {
-            System.out.println("Tablet updated successfully.");
+        if (techAPI.removeTechnologyByID(technology.getId()) != null) {
+            System.out.println("Device deleted successfully.");
         } else {
-            System.out.println("Failed to update tablet.");
+            System.out.println("Failed to delete device.");
         }
     }
 
-    private void updateSmartWatch(String oldModelName, String newModelName, double price, Manufacturer manufacturer, String id) {
-        String material = ScannerInput.readNextLine("Please enter the new material: ");
-        String size = ScannerInput.readNextLine("Please enter the new size: ");
-        String displayType = ScannerInput.readNextLine("Please enter the new display type: ");
-        if (!DisplayTypeUtility.isValidDisplayType(displayType)) {
-            System.out.println("Invalid display type.");
+    private void deleteTechDeviceById() {
+        String id = ScannerInput.readNextLine("Please enter the device ID to delete: ");
+        if (techAPI.isValidId(id)){
+            System.out.println("Device not found.");
             return;
         }
-        SmartWatch updatedSmartWatch = new SmartWatch(newModelName, price, manufacturer, id, material, size, displayType);
-        if (techAPI.updateSmartWatch(oldModelName, updatedSmartWatch)) {
-            System.out.println("SmartWatch updated successfully.");
+
+        if (techAPI.removeTechnologyByID(id) != null) {
+            System.out.println("Device deleted successfully.");
         } else {
-            System.out.println("Failed to update SmartWatch.");
+            System.out.println("Failed to delete device.");
         }
     }
 
-    private void updateSmartBand(String oldModelName, String newModelName, double price, Manufacturer manufacturer, String id) {
-        String material = ScannerInput.readNextLine("Please enter the new material: ");
-        String size = ScannerInput.readNextLine("Please enter the new size: ");
-        char heartRateMonitor = ScannerInput.readNextChar("Does it have a heart rate monitor? (Y/N): ");
-        boolean isHeartRateMonitor = Utilities.YNtoBoolean(heartRateMonitor);
-        SmartBand updatedSmartBand = new SmartBand(newModelName, price, manufacturer, id, material, size, isHeartRateMonitor);
-        if (techAPI.updateSmartBand(oldModelName, updatedSmartBand)) {
-            System.out.println("SmartBand updated successfully.");
-        } else {
-            System.out.println("Failed to update SmartBand.");
-        }
-    }
 
 
 
@@ -586,6 +620,7 @@ public class Driver {
             System.out.println(techAPI.listAllByManufacturerName(manufacturerName));
         } else {
             System.out.println("Invalid Manufacturer name!");
+            System.out.println(manufacturerAPI.listManufacturers());
         }
     }
 
@@ -640,9 +675,146 @@ public class Driver {
             }
             else {
                 System.out.println("Invalid Manufacturer name!");
+                System.out.println(manufacturerAPI.listManufacturers());
             }
         }
 
+        //update methods
+        private void updateTechDeviceByModelName() {
+            String oldModelName = ScannerInput.readNextLine("Please enter the model name to update: ");
+            Technology technology = techAPI.getTechnologyByModelName(oldModelName);
+            if (technology == null) {
+                System.out.println("Device not found.");
+                return;
+            }
+
+            // 检查是否有多个设备共享同一个模型名称
+            int count = 0;
+            for (Technology tech : techAPI.getAllTechnologies()) {
+                if (tech.getModelName().equalsIgnoreCase(oldModelName)) {
+                    count++;
+                }
+            }
+
+            if (count > 1) {
+                System.out.println("Multiple devices found with the same model name. Please use device ID to update.");
+                System.out.println(techAPI.listAllByModelName(oldModelName));
+                return;
+            }
+
+            System.out.println("Device found: "+ "\n"  + techAPI.listAllByModelName(oldModelName));
+
+            String oldId = technology.getId();
+            String newModelName = ScannerInput.readNextLine("Please enter the new model name: ");
+            double price = ScannerInput.readNextDouble("Please enter the new price: ");
+            String manufacturerName = ScannerInput.readNextLine("Please enter the new manufacturer's name: ");
+            Manufacturer manufacturer = manufacturerAPI.getManufacturerByName(manufacturerName);
+            if (manufacturer == null) {
+                System.out.println("Manufacturer not found.");
+                return;
+            }
+            String id = ScannerInput.readNextLine("Please enter the new device ID: ");
+            /*char type = ScannerInput.readNextChar("Please enter the type (T=Tablet, S=SmartWatch, B=SmartBand): ");
+
+            switch (type) {
+                case 'T', 't' -> updateTablet(oldModelName, newModelName, price, manufacturer, id);
+                case 'S', 's' -> updateSmartWatch(oldModelName, newModelName, price, manufacturer, id);
+                case 'B', 'b' -> updateSmartBand(oldModelName, newModelName, price, manufacturer, id);
+                default -> System.out.println("Invalid type entered.");
+            }
+        }*/
+            if (technology instanceof Tablet) {
+                //System.out.println("Updating a Tablet...");
+                updateTablet(oldId, newModelName, price, manufacturer, id);
+            } else if (technology instanceof SmartWatch) {
+                //System.out.println("Updating a SmartWatch...");
+                updateSmartWatch(oldId, newModelName, price, manufacturer, id);
+            } else if (technology instanceof SmartBand) {
+                //System.out.println("Updating a SmartBand...");
+                updateSmartBand(oldId, newModelName, price, manufacturer, id);
+            } else {
+                System.out.println("Invalid type of technology device.");
+            }
+        }
+
+    private void updateTechDeviceById() {
+        String oldId = ScannerInput.readNextLine("Please enter the device ID to update: ");
+        if (techAPI.isValidId(oldId)){
+            System.out.println("Device not found.");
+            return;
+        }
+        Technology technology = techAPI.getTechnologyById(oldId);
+        /*if (technology == null) {
+            System.out.println("Device not found.");
+            return;
+        }*/
+        System.out.println("Device found: "+ "\n" + techAPI.getTechnologyById(oldId));
+
+        String newModelName = ScannerInput.readNextLine("Please enter the new model name: ");
+        double price = ScannerInput.readNextDouble("Please enter the new price: ");
+        String manufacturerName = ScannerInput.readNextLine("Please enter the new manufacturer's name: ");
+        Manufacturer manufacturer = manufacturerAPI.getManufacturerByName(manufacturerName);
+        if (manufacturer == null) {
+            System.out.println("Manufacturer not found.");
+            return;
+        }
+        String id = ScannerInput.readNextLine("Please enter the new device ID: ");
+
+        if (technology instanceof Tablet) {
+            //System.out.println("Updating a Tablet...");
+            updateTablet(oldId, newModelName, price, manufacturer, id);
+        } else if (technology instanceof SmartWatch) {
+            //System.out.println("Updating a SmartWatch...");
+            updateSmartWatch(oldId, newModelName, price, manufacturer, id);
+        } else if (technology instanceof SmartBand) {
+            //System.out.println("Updating a SmartBand...");
+            updateSmartBand(oldId, newModelName, price, manufacturer, id);
+        } else {
+            System.out.println("Invalid type of technology device.");
+        }
+    }
+
+
+    private void updateTablet(String oldId, String newModelName, double price, Manufacturer manufacturer, String id) {
+            String processor = ScannerInput.readNextLine("Please enter the new processor: ");
+            int storage = ScannerInput.readNextInt("Please enter the new storage (GB): ");
+            String operatingSystem = ScannerInput.readNextLine("Please enter the new operating system: ");
+            Tablet updatedTablet = new Tablet(newModelName, price, manufacturer, id, processor, storage, operatingSystem);
+            if (techAPI.updateTablet(oldId, updatedTablet)) {
+                System.out.println("Tablet updated successfully.");
+            } else {
+                System.out.println("Failed to update tablet.");
+            }
+        }
+
+        private void updateSmartWatch(String oldId, String newModelName, double price, Manufacturer manufacturer, String id) {
+            String material = ScannerInput.readNextLine("Please enter the new material: ");
+            String size = ScannerInput.readNextLine("Please enter the new size: ");
+            String displayType = ScannerInput.readNextLine("Please enter the new display type: ");
+            if (!DisplayTypeUtility.isValidDisplayType(displayType)) {
+                System.out.println("Invalid display type.");
+                return;
+            }
+            SmartWatch updatedSmartWatch = new SmartWatch(newModelName, price, manufacturer, id, material, size, displayType);
+            if (techAPI.updateSmartWatch(oldId, updatedSmartWatch)) {
+                System.out.println("SmartWatch updated successfully.");
+            } else {
+                System.out.println("Failed to update SmartWatch.");
+            }
+        }
+
+        private void updateSmartBand(String oldId, String newModelName, double price, Manufacturer manufacturer, String id) {
+            String material = ScannerInput.readNextLine("Please enter the new material: ");
+            String size = ScannerInput.readNextLine("Please enter the new size: ");
+            char heartRateMonitor = ScannerInput.readNextChar("Does it have a heart rate monitor? (Y/N): ");
+            boolean isHeartRateMonitor = Utilities.YNtoBoolean(heartRateMonitor);
+            SmartBand updatedSmartBand = new SmartBand(newModelName, price, manufacturer, id, material, size, isHeartRateMonitor);
+            if (techAPI.updateSmartBand(oldId, updatedSmartBand)) {
+                System.out.println("SmartBand updated successfully.");
+            } else {
+                System.out.println("Failed to update SmartBand.");
+            }
+        }
 
 
 
@@ -677,8 +849,6 @@ public class Driver {
                 return null;
             }
         }
-
-
 
     }
 

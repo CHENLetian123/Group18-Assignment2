@@ -1,43 +1,67 @@
 <object-stream>
   <list>
     <models.SmartBand>
-      <modelName>smart watch1</modelName>
-      <price>129.99000549316406</price>
       <manufacturer>
         <manufacturerName>Samsung</manufacturerName>
         <numEmployees>1200</numEmployees>
       </manufacturer>
       <id>A123</id>
-      <size>large</size>
+      <modelName>smart watch1</modelName>
+      <price>129.99000549316406</price>
       <material>plastic</material>
+      <size>large</size>
       <heartRateMonitor>true</heartRateMonitor>
     </models.SmartBand>
     <models.SmartWatch>
-      <modelName>Smart Watch 12</modelName>
-      <price>459.0</price>
       <manufacturer reference="../../models.SmartBand/manufacturer"/>
       <id>W1234</id>
-      <size>large</size>
+      <modelName>Smart Watch 12</modelName>
+      <price>459.0</price>
       <material>plastic</material>
+      <size>large</size>
       <displayType>LCD</displayType>
     </models.SmartWatch>
     <models.Tablet>
-      <modelName>IPad 123</modelName>
-      <price>678.0</price>
       <manufacturer reference="../../models.SmartBand/manufacturer"/>
       <id>T1223</id>
+      <modelName>IPad 123</modelName>
+      <price>678.0</price>
       <processor>Android</processor>
       <storage>64</storage>
       <operatingSystem>Android</operatingSystem>
     </models.Tablet>
     <models.SmartWatch>
-      <modelName>HiTech Watch</modelName>
-      <price>67.0</price>
       <manufacturer reference="../../models.SmartBand/manufacturer"/>
       <id>W3535</id>
-      <size>small</size>
+      <modelName>HiTech Watch</modelName>
+      <price>67.0</price>
       <material>plastic</material>
+      <size>small</size>
       <displayType>LCD</displayType>
+    </models.SmartWatch>
+    <models.SmartBand>
+      <manufacturer>
+        <manufacturerName>Samsung</manufacturerName>
+        <numEmployees>1200</numEmployees>
+      </manufacturer>
+      <id>SW123</id>
+      <modelName>Super Watch</modelName>
+      <price>1000.0</price>
+      <material>rubber</material>
+      <size>20</size>
+      <heartRateMonitor>true</heartRateMonitor>
+    </models.SmartBand>
+    <models.SmartWatch>
+      <manufacturer>
+        <manufacturerName>Apple</manufacturerName>
+        <numEmployees>1020</numEmployees>
+      </manufacturer>
+      <id>SW999</id>
+      <modelName>Super Watch</modelName>
+      <price>2000.0</price>
+      <material>metal</material>
+      <size>20</size>
+      <displayType>led</displayType>
     </models.SmartWatch>
   </list>
 </object-stream>

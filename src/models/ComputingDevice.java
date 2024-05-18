@@ -40,7 +40,7 @@ public abstract class ComputingDevice extends Technology {
     @Override
     public String toString() {
         return super.toString() +
-                ", Processor: " + processor +
+                "\n" + ", Processor: " + processor +
                 ", Storage: " + storage + "GB";
     }
 }

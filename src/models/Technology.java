@@ -50,7 +50,7 @@ public abstract class Technology {
     }
 
     public void setId(String id) {
-        if (Utilities.validStringlength(id, 10)) {
+        if (Utilities.validStringlength(id, 10)){
             this.id = id;
         }
     }
@@ -63,7 +63,7 @@ public abstract class Technology {
     @Override
     public String toString() {
 
-        return  "Model: " + modelName +
+        return  "  Model: " + modelName +
                 ", Price: €" + price +
                 ", Manufacturer Details: Manufacturer{manufacturerName='" + manufacturer.getManufacturerName() + "'" +
                 ", numEmployees=" + manufacturer.getNumEmployees() + (manufacturer.getNumEmployees() ==1 ? " employee" : " employees") + "}" +

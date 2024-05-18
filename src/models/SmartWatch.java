@@ -33,9 +33,11 @@ public class SmartWatch extends WearableDevice{
     }
 
     public String toString(){
-          return super.toString() +", Display:" +displayType +
+          return  "  Smart Watch" + "\n" +
+                  super.toString() +
+                  "\n" + ", Display:" +displayType +
                   ", The Internet condition is "+connectToInternet() +
-                  ", Insurance Premium:" + getInsurancePremium();
+                  ", Insurance Premium:" + getInsurancePremium() + "\n";
     }
 }
 
