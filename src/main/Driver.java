@@ -300,7 +300,7 @@ public class Driver {
         int option = techAPIMenu();
         while (option != 0) {
             switch (option) {
-                case 1 -> addTechDevice();
+                case 1 ->addTechDevice();
                 case 2 -> deleteTechnology();
                 case 3 -> System.out.println(techAPI.listAllTechnologyDevices());
                 case 4 -> System.out.println(techAPI.listAllTablets());
@@ -823,6 +823,51 @@ public class Driver {
         //---------------------
 
 //TODO - write all the methods that are called from your menu
+        private void callAllMethods(){
+            runManufacturerMenu();
+            runTechAPIMenu();
+            runReportsMenu();
+            searchManufacturers();
+            searchTechnologyDevices();
+            sortTechnologyDevices();
+            saveAll();
+            loadAll();
+
+            addManufacturer();
+            deleteManufacturer();
+            updateManufacturer();
+            System.out.println(manufacturerAPI.listManufacturers());
+            findManufacturer();
+            listByManufacturerName();
+
+            addTechDevice();
+            deleteTechnology();
+            System.out.println(techAPI.listAllTechnologyDevices());
+            System.out.println(techAPI.listAllTablets());
+            System.out.println(techAPI.listAllSmartWatches());
+            System.out.println(techAPI.listAllSmartBands());
+            updateTechDevice();
+
+            System.out.println(manufacturerAPI.listManufacturers());
+             listManufacturersByManufacturerName();
+             listManufacturersByModelName();
+             System.out.println("Number of Manufacturers: " + manufacturerAPI.getNumberOfManufacturers());
+             getNumberOfTechnologyDevicesByManufacturerName();
+
+             System.out.println(techAPI.listAllTechnologyDevices());
+            listTechnologyDevicesByManufacturerName();
+             listTechnologyDevicesByModelName();
+             System.out.println("Number of Technology Devices: " + techAPI.numberOfTechnologyDevices());
+             System.out.println("Number of Tablets: " + techAPI.numberOfTablets());
+             System.out.println("Number of SmartWatches: " + techAPI.numberOfSmartWatches());
+             System.out.println("Number of Smart Bands: " + techAPI.numberOfSmartBands());
+             printTopFiveMostExpensiveTechnology();
+             printTopFiveMostExpensiveTablets();
+             printTopFiveMostExpensiveSmartWatches();
+             printTopFiveMostExpensiveSmartBands();
+             listAlltheTechnologyAbovePrice();
+
+        }
 
         //---------------------
         //  Helper Methods
