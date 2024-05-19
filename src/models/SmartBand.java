@@ -31,7 +31,7 @@ public class SmartBand extends WearableDevice {
             str+="\n" + "Includes Heart Rate Monitor";
         }
         else{
-            str+="No Heart Rate Monitor included";
+            str+="\n" + "No Heart Rate Monitor included";
         }
         str += ", Insurance Premium: " + getInsurancePremium() +
                 ", Internet Connection: " + connectToInternet() + "\n";

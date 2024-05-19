@@ -89,7 +89,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     // 计数智能手表数量
-    public int numberOfSmartWatches() {
+    public int numberOfSmartWatch() {
         int count = 0;
         for (Technology tech : technologyList) {
             if (tech instanceof SmartWatch) {
@@ -111,7 +111,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     // TODO Read/list methods
-    public String listAllTablets() {
+    public String listAllTablet() {
         String listAllTablets = "";
         for (Technology tech : technologyList) {
             if (tech instanceof Tablet) {
@@ -191,6 +191,15 @@ public class TechnologyDeviceAPI implements ISerializer{
         else return "There are no Technology devices in the list.";
     }
 
+    public Manufacturer listAllTechDevicesByChosenManufacturer(Manufacturer manufacturer) {
+        for (Technology tech : technologyList) {
+            if (tech.getManufacturer().equals(manufacturer)) {
+                return tech.getManufacturer();
+            }
+        }
+        return null;
+    }
+
     public  String listAllByManufacturerName(String manuName){
         if (!technologyList.isEmpty()) {
             String listTechnology = "";
@@ -242,6 +251,45 @@ public class TechnologyDeviceAPI implements ISerializer{
         }
     }
 
+    public String listAllTechnologyBelowPrice(double price) {
+        if (technologyList.isEmpty()) {
+            return "No Technology Devices in the store";
+        } else {
+            String result = "";
+            for (int i = 0; i < technologyList.size(); i++) {
+                if (technologyList.get(i).getPrice() < price) {
+                    result += i + ": " + technologyList.get(i) + "\n";
+                }
+            }
+            if (result.equals("")) {
+                return "No technology cheaper than: " + price;
+            } else {
+                return result;
+            }
+        }
+    }
+
+    public String listAllTabletsByOperatingSystem(String operatingSystem) {
+        if (technologyList.isEmpty()) {
+            return "No Tablets in the store";
+        } else {
+            String result = "";
+            for (int i = 0; i < technologyList.size(); i++) {
+                if (technologyList.get(i) instanceof Tablet) {
+                    Tablet tablet = (Tablet) technologyList.get(i);
+                    if (tablet.getOperatingSystem().equalsIgnoreCase(operatingSystem)) {
+                        result += i + ": " + tablet + "\n";
+                    }
+                }
+            }
+            if (result.equals("")) {
+                return "No Tablets with operating system: " + operatingSystem;
+            } else {
+                return result;
+            }
+        }
+    }
+
     public List<Technology> getAllTechnologies() {
         return new ArrayList<>(technologyList);
     }
@@ -275,7 +323,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
 
-    public Technology getTechnologyById(String id) {
+    public Technology getTechnologyDeviceById(String id) {
         for (Technology tech : technologyList) {
             if (tech.getId().equals(id)) {
                 return tech;
@@ -319,13 +367,14 @@ public class TechnologyDeviceAPI implements ISerializer{
         return -1;
     }
    //TODO - delete methods
-    public Technology removeTechnologyByID(String ID) {
-        int index = retrieveTechnologyIndex(ID);
-        if (index != -1) {
-            return technologyList.remove(index);
-        }
-        return null;
-    }
+   public Technology deleteTechnologyById(String ID) {
+       int index = retrieveTechnologyIndex(ID);
+       if (index >= 0) {
+           return deleteTechnologyByIndex(index);
+       }
+       return null;
+   }
+
    /*public Manufacturer removeManufacturerByName(String manufacturerName){
        int index = retrieveManufacturerIndex(manufacturerName);
        if (index != -1) {
@@ -334,6 +383,12 @@ public class TechnologyDeviceAPI implements ISerializer{
        return null;
    }*/
 
+    public Technology deleteTechnologyByIndex(int index) {
+        if (Utilities.isValidIndex(technologyList, index)) {
+            return technologyList.remove(index);
+        }
+        return null;
+    }
 
     // update methods
     public boolean updateTechnology(String oldModelName, Technology updateTech) {
@@ -350,7 +405,7 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     public boolean updateSmartWatch(String oldId, SmartWatch updateSmartWatch) {
-        SmartWatch foundSmartWatch = (SmartWatch) getTechnologyById(oldId);
+        SmartWatch foundSmartWatch = (SmartWatch) getTechnologyDeviceById(oldId);
         if (foundSmartWatch != null) {
             foundSmartWatch.setModelName(updateSmartWatch.getModelName());
             foundSmartWatch.setPrice(updateSmartWatch.getPrice());
@@ -365,7 +420,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     public boolean updateTablet(String oldId, Tablet updateTablet) {
-        Tablet foundTablet = (Tablet) getTechnologyById(oldId);
+        Tablet foundTablet = (Tablet) getTechnologyDeviceById(oldId);
         if (foundTablet != null) {
             foundTablet.setModelName(updateTablet.getModelName());
             foundTablet.setPrice(updateTablet.getPrice());
@@ -381,7 +436,7 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     public boolean updateSmartBand(String oldId, SmartBand updateSmartBand) {
-        SmartBand foundSmartBand = (SmartBand) getTechnologyById(oldId);
+        SmartBand foundSmartBand = (SmartBand) getTechnologyDeviceById(oldId);
         if (foundSmartBand != null) {
             foundSmartBand.setModelName(updateSmartBand.getModelName());
             foundSmartBand.setPrice(updateSmartBand.getPrice());
@@ -397,20 +452,21 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     //TODO - sort methods
-    private void swapTechnology(int i, int j) {
+    private void swapTechnology(List<Technology> technologyList, int i, int j) {
         Technology temp = technologyList.get(i);
         technologyList.set(i, technologyList.get(j));
         technologyList.set(j, temp);
     }
 
     // 按价格降序排序
+    // Sort in descending order of price
     public void sortByPriceDescending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getPrice() < technologyList.get(i + 1).getPrice()) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList, i, i + 1);
                     swapped = true;
                 }
             }
@@ -419,13 +475,14 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     // 按价格升序排序
+    // Sort in ascending order of price
     public void sortByPriceAscending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getPrice() > technologyList.get(i + 1).getPrice()) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList,i, i + 1);
                     swapped = true;
                 }
             }
@@ -434,13 +491,14 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     // 按型号名称升序排序
+    // Sort by model name in ascending order
     public void sortByModelNameAscending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getModelName().compareTo(technologyList.get(i + 1).getModelName()) > 0) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList, i, i + 1);
                     swapped = true;
                 }
             }
@@ -449,13 +507,14 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     // 按型号名称降序排序
+    // Sort by model name in descending order
     public void sortByModelNameDescending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getModelName().compareTo(technologyList.get(i + 1).getModelName()) < 0) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList, i, i + 1);
                     swapped = true;
                 }
             }
@@ -464,13 +523,14 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     // 按制造商名称升序排序
+    // Sort by manufacturer name in ascending order
     public void sortByManufacturerNameAscending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getManufacturer().getManufacturerName().compareTo(technologyList.get(i + 1).getManufacturer().getManufacturerName()) > 0) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList, i, i + 1);
                     swapped = true;
                 }
             }
@@ -479,13 +539,14 @@ public class TechnologyDeviceAPI implements ISerializer{
 
 
     // 按制造商名称降序排序
+    // Sort by manufacturer name in descending order
     public void sortByManufacturerNameDescending() {
         boolean swapped;
         do {
             swapped = false;
             for (int i = 0; i < technologyList.size() - 1; i++) {
                 if (technologyList.get(i).getManufacturer().getManufacturerName().compareTo(technologyList.get(i + 1).getManufacturer().getManufacturerName()) < 0) {
-                    swapTechnology(i, i + 1);
+                    swapTechnology(technologyList, i, i + 1);
                     swapped = true;
                 }
             }
@@ -506,7 +567,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     // List the Top five most expensive Tablets
-    public List<Technology> topFiveMostExpensiveTablets() {
+    public List<Technology> topFiveMostExpensiveTablet() {
         List<Technology> sorted = new ArrayList<>();
         for (Technology tech : technologyList) {
             if (tech instanceof Tablet) {
@@ -518,7 +579,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     // List the Top five most expensive Smartwatches
-    public List<Technology> topFiveMostExpensiveSmartWatches() {
+    public List<Technology> topFiveMostExpensiveSmartWatch() {
         List<Technology> sorted = new ArrayList<>();
         for (Technology tech : technologyList) {
             if (tech instanceof SmartWatch) {
@@ -530,7 +591,7 @@ public class TechnologyDeviceAPI implements ISerializer{
     }
 
     // List the Top five most expensive Smart Bands
-    public List<Technology> topFiveMostExpensiveSmartBands() {
+    public List<Technology> topFiveMostExpensiveSmartBand() {
         List<Technology> sorted = new ArrayList<>();
         for (Technology tech : technologyList) {
             if (tech instanceof SmartBand) {

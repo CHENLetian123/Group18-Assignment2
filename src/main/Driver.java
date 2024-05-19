@@ -303,7 +303,7 @@ public class Driver {
                 case 1 ->addTechDevice();
                 case 2 -> deleteTechnology();
                 case 3 -> System.out.println(techAPI.listAllTechnologyDevices());
-                case 4 -> System.out.println(techAPI.listAllTablets());
+                case 4 -> System.out.println(techAPI.listAllTablet());
                 case 5 -> System.out.println(techAPI.listAllSmartWatches());
                 case 6 -> System.out.println(techAPI.listAllSmartBands());
                 case 7 -> updateTechDevice();
@@ -327,6 +327,7 @@ public class Driver {
         }
 
         String id = ScannerInput.readNextLine("Please enter the device ID: ");
+        // Check whether the ID already exists
         if (!techAPI.isValidId(id)){
             System.out.println("This device ID already exists! Please use a different device ID or update by this device ID.");
             return;
@@ -456,7 +457,8 @@ public class Driver {
             return;
         }
 
-        // 检查是否有多个设备共享同一个模型名称
+        // 检查有没有同名的设备
+        // Check whether there are any devices with the same name
         int count = 0;
         for (Technology tech : techAPI.getAllTechnologies()) {
             if (tech.getModelName().equalsIgnoreCase(modelName)) {
@@ -470,7 +472,7 @@ public class Driver {
             return;
         }
 
-        if (techAPI.removeTechnologyByID(technology.getId()) != null) {
+        if (techAPI.deleteTechnologyById(technology.getId()) != null) {
             System.out.println("Device deleted successfully.");
         } else {
             System.out.println("Failed to delete device.");
@@ -484,7 +486,7 @@ public class Driver {
             return;
         }
 
-        if (techAPI.removeTechnologyByID(id) != null) {
+        if (techAPI.deleteTechnologyById(id) != null) {
             System.out.println("Device deleted successfully.");
         } else {
             System.out.println("Failed to delete device.");
@@ -577,15 +579,17 @@ public class Driver {
                 case 1-> System.out.println(techAPI.listAllTechnologyDevices());
                 case 2-> listTechnologyDevicesByManufacturerName();
                 case 3-> listTechnologyDevicesByModelName();
-                case 4-> System.out.println("Number of Technology Devices: " + techAPI.numberOfTechnologyDevices());
-                case 5-> System.out.println("Number of Tablets: " + techAPI.numberOfTablets());
-                case 6-> System.out.println("Number of SmartWatches: " + techAPI.numberOfSmartWatches());
-                case 7-> System.out.println("Number of Smart Bands: " + techAPI.numberOfSmartBands());
-                case 8-> printTopFiveMostExpensiveTechnology();
-                case 9-> printTopFiveMostExpensiveTablets();
-                case 10-> printTopFiveMostExpensiveSmartWatches();
-                case 11-> printTopFiveMostExpensiveSmartBands();
-                case 12-> listAlltheTechnologyAbovePrice();
+                case 4-> listAllTabletsByOperatingSystem();
+                case 5-> System.out.println("Number of Technology Devices: " + techAPI.numberOfTechnologyDevices());
+                case 6-> System.out.println("Number of Tablets: " + techAPI.numberOfTablets());
+                case 7-> System.out.println("Number of SmartWatches: " + techAPI.numberOfSmartWatch());
+                case 8-> System.out.println("Number of Smart Bands: " + techAPI.numberOfSmartBands());
+                case 9-> printTopFiveMostExpensiveTechnology();
+                case 10-> printTopFiveMostExpensiveTablets();
+                case 11-> printTopFiveMostExpensiveSmartWatches();
+                case 12-> printTopFiveMostExpensiveSmartBands();
+                case 13-> listAlltheTechnologyAbovePrice();
+                case 14-> listAlltheTechnologyBelowPrice();
                 default->  System.out.println("Invalid option entered" + option);
             }
             ScannerInput.readNextLine("\n Press the enter key to continue");
@@ -599,15 +603,17 @@ public class Driver {
                | 1) List Technology Devices                             |
                | 2) List Technology Devices by a given manufacturer name|
                | 3) List Technology Devices by a given model name       |
-               | 4) Number of Technology Devices                        |
-               | 5) Number of Tablets                                   |
-               | 6) Number of SmartWatches                              |
-               | 7) Number of Smart Bands                               |
-               | 8) List the Top five most expensive Technology devices |
-               | 9) List the Top five most expensive Tablets            |
-               | 10) List the Top five most expensive Smartwatches      |
-               | 11) List the Top five most expensive Smart Bands       |
-               | 12) List all the Technology devices above the price    |
+               | 4) List all Tablets by operating system name           |
+               | 5) Number of Technology Devices                        |
+               | 6) Number of Tablets                                   |
+               | 7) Number of SmartWatches                              |
+               | 8) Number of Smart Bands                               |
+               | 9) List the Top five most expensive Technology devices |
+               | 10) List the Top five most expensive Tablets            |
+               | 11) List the Top five most expensive Smartwatches      |
+               | 12) List the Top five most expensive Smart Bands       |
+               | 13) List all the Technology devices above the price    |
+               | 14) List all the Technology devices below the price    |
                | 0) Return to main menu                                 |
                  ---------------------------------------------------""");
         return ScannerInput.readNextInt("==>>");
@@ -629,6 +635,15 @@ public class Driver {
         System.out.println(techAPI.listAllByModelName(modelName));
     }
 
+    public void listAllTabletsByOperatingSystem() {
+        String operatingSystem = ScannerInput.readNextLine("Please enter the operating system: ");
+        if (OperatingSystemUtility.isValidOperatingSystem(operatingSystem)) {
+            System.out.println(techAPI.listAllTabletsByOperatingSystem(operatingSystem));
+        } else {
+            System.out.println("Invalid operating system name.");
+        }
+    }
+
     public void printTopFiveMostExpensiveTechnology() {
         List<Technology> topFive = techAPI.topFiveMostExpensiveTechnology();
         System.out.println("Top Five Most Expensive Technology Devices:");
@@ -636,19 +651,19 @@ public class Driver {
     }
 
     public void printTopFiveMostExpensiveTablets() {
-        List<Technology> topFive = techAPI.topFiveMostExpensiveTablets();
+        List<Technology> topFive = techAPI.topFiveMostExpensiveTablet();
         System.out.println("Top Five Most Expensive Tablets:");
         printTechnologyList(topFive);
     }
 
     public void printTopFiveMostExpensiveSmartWatches() {
-        List<Technology> topFive = techAPI.topFiveMostExpensiveSmartWatches();
+        List<Technology> topFive = techAPI.topFiveMostExpensiveSmartWatch();
         System.out.println("Top Five Most Expensive SmartWatches:");
         printTechnologyList(topFive);
     }
 
     public void printTopFiveMostExpensiveSmartBands() {
-        List<Technology> topFive = techAPI.topFiveMostExpensiveSmartBands();
+        List<Technology> topFive = techAPI.topFiveMostExpensiveSmartBand();
         System.out.println("Top Five Most Expensive Smart Bands:");
         printTechnologyList(topFive);
     }
@@ -656,6 +671,11 @@ public class Driver {
     public void listAlltheTechnologyAbovePrice(){
             Double price = ScannerInput.readNextDouble("Please enter a price: ");
             System.out.println(techAPI.listAllTechnologyAbovePrice(price));
+    }
+
+    public void listAlltheTechnologyBelowPrice(){
+        Double price = ScannerInput.readNextDouble("Please enter a price: ");
+        System.out.println(techAPI.listAllTechnologyBelowPrice(price));
     }
 
 
@@ -688,7 +708,8 @@ public class Driver {
                 return;
             }
 
-            // 检查是否有多个设备共享同一个模型名称
+            // 检查有没有同名的设备
+            // Check whether there are any devices with the same name
             int count = 0;
             for (Technology tech : techAPI.getAllTechnologies()) {
                 if (tech.getModelName().equalsIgnoreCase(oldModelName)) {
@@ -724,13 +745,13 @@ public class Driver {
             }
         }*/
             if (technology instanceof Tablet) {
-                //System.out.println("Updating a Tablet...");
+                System.out.println("Updating a Tablet...");
                 updateTablet(oldId, newModelName, price, manufacturer, id);
             } else if (technology instanceof SmartWatch) {
-                //System.out.println("Updating a SmartWatch...");
+                System.out.println("Updating a SmartWatch...");
                 updateSmartWatch(oldId, newModelName, price, manufacturer, id);
             } else if (technology instanceof SmartBand) {
-                //System.out.println("Updating a SmartBand...");
+                System.out.println("Updating a SmartBand...");
                 updateSmartBand(oldId, newModelName, price, manufacturer, id);
             } else {
                 System.out.println("Invalid type of technology device.");
@@ -743,12 +764,12 @@ public class Driver {
             System.out.println("Device not found.");
             return;
         }
-        Technology technology = techAPI.getTechnologyById(oldId);
+        Technology technology = techAPI.getTechnologyDeviceById(oldId);
         /*if (technology == null) {
             System.out.println("Device not found.");
             return;
         }*/
-        System.out.println("Device found: "+ "\n" + techAPI.getTechnologyById(oldId));
+        System.out.println("Device found: "+ "\n" + techAPI.getTechnologyDeviceById(oldId));
 
         String newModelName = ScannerInput.readNextLine("Please enter the new model name: ");
         double price = ScannerInput.readNextDouble("Please enter the new price: ");
@@ -761,13 +782,13 @@ public class Driver {
         String id = ScannerInput.readNextLine("Please enter the new device ID: ");
 
         if (technology instanceof Tablet) {
-            //System.out.println("Updating a Tablet...");
+            System.out.println("Updating a Tablet...");
             updateTablet(oldId, newModelName, price, manufacturer, id);
         } else if (technology instanceof SmartWatch) {
-            //System.out.println("Updating a SmartWatch...");
+            System.out.println("Updating a SmartWatch...");
             updateSmartWatch(oldId, newModelName, price, manufacturer, id);
         } else if (technology instanceof SmartBand) {
-            //System.out.println("Updating a SmartBand...");
+            System.out.println("Updating a SmartBand...");
             updateSmartBand(oldId, newModelName, price, manufacturer, id);
         } else {
             System.out.println("Invalid type of technology device.");
