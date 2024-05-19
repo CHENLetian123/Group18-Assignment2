@@ -844,51 +844,70 @@ public class Driver {
         //---------------------
 
 //TODO - write all the methods that are called from your menu
-        private void callAllMethods(){
-            runManufacturerMenu();
-            runTechAPIMenu();
-            runReportsMenu();
-            searchManufacturers();
-            searchTechnologyDevices();
-            sortTechnologyDevices();
-            saveAll();
-            loadAll();
-
-            addManufacturer();
-            deleteManufacturer();
-            updateManufacturer();
-            System.out.println(manufacturerAPI.listManufacturers());
-            findManufacturer();
-            listByManufacturerName();
-
-            addTechDevice();
-            deleteTechnology();
-            System.out.println(techAPI.listAllTechnologyDevices());
-            System.out.println(techAPI.listAllTablets());
-            System.out.println(techAPI.listAllSmartWatches());
-            System.out.println(techAPI.listAllSmartBands());
-            updateTechDevice();
-
-            System.out.println(manufacturerAPI.listManufacturers());
-             listManufacturersByManufacturerName();
-             listManufacturersByModelName();
-             System.out.println("Number of Manufacturers: " + manufacturerAPI.getNumberOfManufacturers());
-             getNumberOfTechnologyDevicesByManufacturerName();
-
-             System.out.println(techAPI.listAllTechnologyDevices());
-            listTechnologyDevicesByManufacturerName();
-             listTechnologyDevicesByModelName();
-             System.out.println("Number of Technology Devices: " + techAPI.numberOfTechnologyDevices());
-             System.out.println("Number of Tablets: " + techAPI.numberOfTablets());
-             System.out.println("Number of SmartWatches: " + techAPI.numberOfSmartWatches());
-             System.out.println("Number of Smart Bands: " + techAPI.numberOfSmartBands());
-             printTopFiveMostExpensiveTechnology();
-             printTopFiveMostExpensiveTablets();
-             printTopFiveMostExpensiveSmartWatches();
-             printTopFiveMostExpensiveSmartBands();
-             listAlltheTechnologyAbovePrice();
-
-        }
+       /* private void callAllMethods(){
+                 printTopFiveMostExpensiveTablets
+                 runManufacturerReports
+                 deleteMenu
+                 getManufacturerByName
+                 updateMenu
+                 sortByPriceDescending
+                 getNumberOfTechnologyDevicesByManufacturerName
+                 sortTechnologyDevices
+                 addSmartWatch
+                 sortByModelNameDescending
+                 techAPIMenu
+                 updateTechDeviceByld
+                 runTechnologyReports
+                 sortMenu
+                 addTechDevice
+                 listAllTabletsByOperatingSystem
+                 reportsMenu
+                 runManufacturerMenu
+                 manufacturerMenu
+                 printTechnologyList
+                 exitApp
+                 loadAll
+                 runReportsMenu
+                 addSmartBand
+                 listByManufacturerName
+                 printTopFiveMostExpensiveSmartWatches
+                 deleteTechDeviceByld
+                 updateSmartWatch
+                 deleteManufacturer
+                 runTechAPIMenu
+                 main (String [])
+                 listTechnologyDevicesByModelName
+                 start
+                 technologyReportsMenu
+                 updateTechDeviceByModelName
+                 searchTechnologyDevices
+                 listTechnologyDevicesByManufacturerName
+                 callAllMethods
+                 sortByManufacturerDescending
+                 listManufacturersByModelName
+                 findManufacturer
+                 sortByPriceAscending
+                 sortByModelNameAscending
+                 listAlltheTechnologyAbovePrice
+                 deleteTechnology
+                 deleteTechDeviceByModelName
+                 sortByManufacturerAscending
+                 searchManufacturers
+                 listManufacturersByManufacturerName
+                 updateManufacturer
+                 updateSmartBand
+                 saveAll
+                 listAlltheTechnologyBelowPrice
+                 addManufacturer
+                 addTablet
+                 updateTablet
+                 mainMenu
+                 printTopFiveMostExpensiveSmartBands
+                 manufacturerRebortsMenu
+                 runMainMenu
+                 updateTechDevice
+                 printTopFiveMostExpensiveTechnology
+                 }*/
 
         //---------------------
         //  Helper Methods
